@@ -1,4 +1,4 @@
 zerograph-js
 ============
 
-Javascript library to interact with zerograph kernel extension
+Javascript library to interact with zerograph kernel extension. See examples.
