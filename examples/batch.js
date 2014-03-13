@@ -7,10 +7,10 @@ neo.createConnection("tcp://localhost:47474",{poolSize:10},function(err,graph){
   var batch1 = graph.batch();
   var batch2 = graph.batch();
   _.range(1000).forEach(function(i){
-    var name = format("test_user_%s_%s",n,i);
+    var name = format("test_user_%s",i);
     batch1.createNode(["User"],{name:name},function(err,user){
       if (err) return console.error('ERROR:',err);
-      console.log("result for individual item",user.toJSON())
+      console.log("result for individual item",user)
     });
   })
   batch1.submit(function(err,results){
@@ -23,7 +23,7 @@ neo.createConnection("tcp://localhost:47474",{poolSize:10},function(err,graph){
   var usr1 = batch2.createNode(["User"],{name:"batch_user_1"});
   var usr2 = batch2.createNode(["User"],{name:"batch_user_2"});
   batch2.createRel(usr1, usr2, "LOVES", { since: 2005 });
-  batch.submit(function(){
+  batch2.submit(function(err,results){
     if (err) return console.error('ERROR:',err);
     console.log("result for whole batch",JSON.stringify(results,null,4));
   })
