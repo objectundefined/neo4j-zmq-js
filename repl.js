@@ -18,16 +18,14 @@ neo.createConnection("tcp://localhost:47474",{poolSize:1},function(err,graph){
   function eval(str, context, file, cb) {
     var t1 = Date.now();
     str = str.slice(1).slice(0, -2);
-    graph.query(str,function(err,d){
+    graph.query(str,function(err,d,info){
       if(err) return cb(err);
       var t2 = Date.now()
-      d.forEach(function(item,i){
-        Object.keys(item).forEach(function(key,ii){
-          var rowNum = ii==0 ? i+1 : "";
-          console.log("%s\t%s\t%s",rowNum,key,JSON.stringify(item[key]));
-        })
-      });
-      console.log("query took %sms",t2-t1);
+      var roudTripTime = (t2-t1) + "ms";
+      
+      console.log("results:\n%s\n", JSON.stringify(d,null,4));
+      console.log("info:\n%s\n", JSON.stringify(info,null,4));
+      
       cb();
     });
   }

@@ -10,3 +10,9 @@ exports.createConnection = function ( host , o, f ) {
     cb(null,new Graph(conn));
   });
 }
+
+exports.createConnectionSync = function ( host , options ) {
+  var conn = new Connection(host,options);
+  conn.connectSync();
+  return new Graph(conn);
+}
