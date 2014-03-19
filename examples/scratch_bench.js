@@ -33,7 +33,7 @@ function batchIteration(size,graph,cb) {
   var t1 = Date.now();
   var batch = graph.batch();
   for (var i=0;i<size;i++){
-    batch.createNode(["User"],{_id:uuid()});
+    batch.mergeNodeByLabelAndProperty("User","_id",uuid());
   }
   batch.submit(function (err){
     if (err) return cb(err);

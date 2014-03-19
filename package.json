@@ -1,5 +1,5 @@
 {
-  "name": "zerograph-js",
+  "name": "neo4j-zmq-js",
   "version": "0.0.0",
   "description": "Javascript library to interact with zerograph kernel extension",
   "main": "index.js",
