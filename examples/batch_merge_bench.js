@@ -7,7 +7,8 @@ var uuid = require('node-uuid').v4;
 neo.createConnection("tcp://localhost:47474",{poolSize:10},function(err,graph){
   var batch = graph.batch();
   var amt = 1000;
-  async.times(10,function(n,cb){
+  console.time("fifty_times_thousand");
+  async.times(50,function(n,cb){
     var t1 = Date.now();
     _.range(amt).forEach(function(i){
       batch.mergeNodeByLabelAndProperty("User","_id",10000+i);
@@ -21,6 +22,7 @@ neo.createConnection("tcp://localhost:47474",{poolSize:10},function(err,graph){
     });
   },function(err){
     if (err) console.error('ERROR:',err);
+    console.timeEnd("fifty_times_thousand");
     process.exit();
   })
 })

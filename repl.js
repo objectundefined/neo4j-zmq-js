@@ -11,9 +11,7 @@ neo.createConnection("tcp://localhost:47474",{poolSize:1},function(err,graph){
     eval: eval,
     ignoreUndefined: true
   }).on('exit', function() {
-    graph._connection.disconnect(function(err) {
-      if (err) throw err;
-    });
+    graph._connection.disconnect();
   });
   var tmp = [];
   var params = {};
