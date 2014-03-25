@@ -3,16 +3,31 @@ var async = require('async');
 var format = require('util').format;
 var _ = require('underscore');
 var uuid = require('node-uuid');
+var assert = require('assert');
 
 neo.createConnection("tcp://localhost:47474",{poolSize:10},function(err,graph){
   var totalNodes = 100000;
   var iterations = 250;
-  runBatchIteration(graph,totalNodes,iterations,function(){
+  runSingleIteration(graph,totalNodes,iterations,function(){
     process.exit();
-  })
-  
+  });
 })
 
+
+function runSingleIteration ( graph, totalNodes, iterations, cb ) {
+  var t1 = Date.now();
+  async.each(_.range(iterations),function(n,cb){
+    singleIteration((totalNodes/iterations),graph,cb);
+  },function(err){
+    if (err) throw err;
+    var t2 = Date.now();
+    var totTime = t2-t1;
+    var nodesPerSec = (totalNodes/totTime)*1000;
+    console.log("Took %sms to create %s nodes w/ unique constraint.",totTime,totalNodes)
+    console.log("Inserted %s nodes per second",nodesPerSec);
+    cb()
+  })
+}
 
 function runBatchIteration ( graph, totalNodes, iterations, cb ) {
   var t1 = Date.now();
@@ -47,11 +62,16 @@ function batchIteration(size,graph,cb) {
   })
 }
 
-function runSingleIterations(graph,times,cb) {
+function singleIteration(times,graph,cb) {
   console.log("Running Iteration: %s Write Transactions (Create Node w/ Unique Constraint)",times)
   var t1 = Date.now();
   async.times(times,function(n,cb){
-    graph.createNode(["User"],{_id:uuid()},cb);
+    var itemId = uuid();
+    graph.createNode(["User"],{_id:itemId},function(err,node){
+      if (err) return cb(err);
+      assert.equal(itemId,node.properties._id,"Wrong node returned!!");
+      cb(null,node);
+    });
   },function (err){
     if (err) return cb(err);
     var t2 = Date.now();
