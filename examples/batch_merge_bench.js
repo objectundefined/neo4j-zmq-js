@@ -21,7 +21,7 @@ neo.createConnection("tcp://localhost:47474",{poolSize:10},function(err,graph){
       cb();
     });
   },function(err){
-    if (err) console.error('ERROR:',err);
+    if (err) throw err;
     console.timeEnd("fifty_times_thousand");
     process.exit();
   })
