@@ -20,7 +20,7 @@
     "zmq": "~2.6.0",
     "async": "~0.2.10",
     "underscore": "~1.6.0",
-    "node-uuid": "^1.4.1"
+    "node-uuid": "1.4.1"
   },
   "devDependencies": {
     "underscore": "~1.6.0"
