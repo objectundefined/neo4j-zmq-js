@@ -6,8 +6,8 @@ var uuid = require('node-uuid');
 var assert = require('assert');
 
 neo.createConnection("tcp://localhost:47474",{poolSize:10},function(err,graph){
-  var totalNodes = 100000;
-  var iterations = 250;
+  var totalNodes = 10000;
+  var iterations = 1;
   runSingleIteration(graph,totalNodes,iterations,function(){
     process.exit();
   });
@@ -16,7 +16,7 @@ neo.createConnection("tcp://localhost:47474",{poolSize:10},function(err,graph){
 
 function runSingleIteration ( graph, totalNodes, iterations, cb ) {
   var t1 = Date.now();
-  async.each(_.range(iterations),function(n,cb){
+  async.eachSeries(_.range(iterations),function(n,cb){
     singleIteration((totalNodes/iterations),graph,cb);
   },function(err){
     if (err) throw err;
