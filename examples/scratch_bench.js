@@ -7,7 +7,7 @@ var assert = require('assert');
 
 neo.createConnection("tcp://localhost:47474",{poolSize:10},function(err,graph){
   var totalNodes = 10000;
-  var iterations = 1;
+  var iterations = 10;
   runSingleIteration(graph,totalNodes,iterations,function(){
     process.exit();
   });
