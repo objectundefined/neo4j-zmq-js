@@ -6,10 +6,14 @@ var uuid = require('node-uuid');
 var assert = require('assert');
 
 neo.createConnection("tcp://localhost:47474",{poolSize:10},function(err,graph){
-  var totalNodes = 10000;
+  var totalNodes = 1000;
   var iterations = 1;
-  runSingleIteration(graph,totalNodes,iterations,function(){
-    process.exit();
+  console.log('checking unique constraint');
+  graph.query("CREATE CONSTRAINT ON (u:User) ASSERT u._id IS UNIQUE",{},function(err){
+    if (err) throw err;
+    runSingleIteration(graph,totalNodes,iterations,function(){
+      process.exit();
+    });    
   });
 })
 
@@ -66,10 +70,13 @@ function singleIteration(times,graph,cb) {
   console.log("Running Iteration: %s Write Transactions (Create Node w/ Unique Constraint)",times)
   var t1 = Date.now();
   async.times(times,function(n,cb){
-    var itemId = uuid();
+    var itemId = (n==100) ? "BADID" : uuid();
     graph.createNode(["User"],{_id:itemId},function(err,node){
-      if (err) return cb(err);
-      assert.equal(itemId,node.properties._id,"Wrong node returned!!");
+      if (err) {
+       //return cb(err);
+       console.log(err); 
+      }
+      //assert.equal(itemId,node.properties._id,"Wrong node returned!!");
       cb(null,node);
     });
   },function (err){
