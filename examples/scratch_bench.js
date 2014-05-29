@@ -70,7 +70,7 @@ function singleIteration(times,graph,cb) {
   console.log("Running Iteration: %s Write Transactions (Create Node w/ Unique Constraint)",times)
   var t1 = Date.now();
   async.times(times,function(n,cb){
-    var itemId = uuid();//(n==100) ? "BADID" : uuid();
+    var itemId = (n==45) ? "BADID" : uuid();
     graph.createNode(["User"],{_id:itemId},function(err,node){
       if (err) {
        //return cb(err);
