@@ -4,8 +4,10 @@ var Single = require('./lib/Single');
 var async = require('async');
 var format = require('util').format;
 var _ = require('underscore');
-
-neo.createConnection("tcp://localhost:47474",{poolSize:1},function(err,graph){
+var host = process.argv[2] || "tcp://localhost:47474";
+console.log('connecting to %s', host);
+neo.createConnection(host,{poolSize:1},function(err,graph){
+  if (err) throw err;
   repl.start({
     prompt: 'graph> ',
     eval: eval,
