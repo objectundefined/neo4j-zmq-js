@@ -13,7 +13,7 @@ neo.createConnection(host,{poolSize:1},function(err,graph){
     eval: eval,
     ignoreUndefined: true
   }).on('exit', function() {
-    graph._connection.disconnect();
+    process.exit();
   });
   var tmp = [];
   var params = {};
