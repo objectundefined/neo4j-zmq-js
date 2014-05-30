@@ -20,7 +20,7 @@ var argv = require('optimist')
 
 var host = argv.host + ":" + argv.port;
 console.log('connecting to %s', host);
-neo.createConnection(host,{poolSize:1},function(err,graph){
+neo.createConnection(host,{heartbeat_timeout: 1000000 },function(err,graph){
   if (err) throw err;
   repl.start({
     prompt: 'graph> ',
