@@ -4,7 +4,21 @@ var Single = require('./lib/Single');
 var async = require('async');
 var format = require('util').format;
 var _ = require('underscore');
-var host = process.argv[2] || "tcp://localhost:47474";
+var argv = require('optimist')
+    .options('h', {
+        alias: 'host',
+        default: 'tcp://localhost',
+        describe: 'hostname to connect to'
+    })
+    .options('p', {
+        alias: 'port',
+        default: '47474',
+        describe: 'port to connect to'
+    })
+    .argv
+;
+
+var host = argv.host + ":" + argv.port;
 console.log('connecting to %s', host);
 neo.createConnection(host,{poolSize:1},function(err,graph){
   if (err) throw err;
