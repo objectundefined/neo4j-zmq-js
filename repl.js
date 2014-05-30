@@ -41,7 +41,8 @@ neo.createConnection(host,{heartbeat_timeout: 1000000 },function(err,graph){
       query = tmp.splice(0).join("\n");
       p = params;
       params={};
-      graph.query(query,p,function(err,d,info){
+      var txn = graph.batch();
+      txn.query(query,p,function(err,d,info){
         if(err) return cb(err);
         var t2 = Date.now()
         var roudTripTime = (t2-t1) + "ms";
@@ -51,6 +52,7 @@ neo.createConnection(host,{heartbeat_timeout: 1000000 },function(err,graph){
       
         cb();
       });
+      txn.submit();
     } else if (str.indexOf("$PARAMS=")==0) {
       
       try {
