@@ -11,58 +11,29 @@ neo.createConnection("tcp://localhost:47474",{poolSize:10},function(err,graph){
   console.log('checking unique constraint');
   graph.query("CREATE CONSTRAINT ON (u:User) ASSERT u._id IS UNIQUE",{},function(err){
     if (err) throw err;
-    runSingleIteration(graph,totalNodes,iterations,function(){
+    runSingleIterations(graph,totalNodes,iterations,function(){
       process.exit();
     });    
   });
 })
 
 
-function runSingleIteration ( graph, totalNodes, iterations, cb ) {
+function runSingleIterations ( graph, totalNodes, iterations, cb ) {
   var t1 = Date.now();
+  var timeout_time = 500;
   async.eachSeries(_.range(iterations),function(n,cb){
-    singleIteration((totalNodes/iterations),graph,cb);
+    singleIteration((totalNodes/iterations),graph,function(err){
+      if (err) return cb(err);
+      setTimeout(cb,timeout_time);
+    });
   },function(err){
     if (err) throw err;
     var t2 = Date.now();
-    var totTime = t2-t1;
+    var totTime = t2-t1-(iterations*timeout_time);
     var nodesPerSec = (totalNodes/totTime)*1000;
     console.log("Took %sms to create %s nodes w/ unique constraint.",totTime,totalNodes)
     console.log("Inserted %s nodes per second",nodesPerSec);
     cb()
-  })
-}
-
-function runBatchIteration ( graph, totalNodes, iterations, cb ) {
-  var t1 = Date.now();
-  async.eachLimit(_.range(iterations),10,function(n,cb){
-    batchIteration((totalNodes/iterations),graph,cb);
-  },function(err){
-    if (err) throw err;
-    var t2 = Date.now();
-    var totTime = t2-t1;
-    var nodesPerSec = (totalNodes/totTime)*1000;
-    console.log("Took %sms to create %s nodes w/ unique constraint.",totTime,totalNodes)
-    console.log("Inserted %s nodes per second",nodesPerSec);
-    cb()
-  })
-}
-
-function batchIteration(size,graph,cb) {
-  var t1 = Date.now();
-  var batch = graph.batch();
-  for (var i=0;i<size;i++){
-    batch.mergeNodeByLabelAndProperty("User","_id",uuid());
-  }
-  batch.submit(function (err){
-    if (err) return cb(err);
-    var t2 = Date.now();
-    var totTime = (t2-t1);
-    var perCycle = totTime/size;
-    setImmediate(cb,err);
-    setImmediate(function(){
-      console.log("Batch Time (%s inserts): %sms, Per-item: %sms",size,totTime,perCycle)
-    })
   })
 }
 
@@ -70,7 +41,7 @@ function singleIteration(times,graph,cb) {
   console.log("Running Iteration: %s Write Transactions (Create Node w/ Unique Constraint)",times)
   var t1 = Date.now();
   async.times(times,function(n,cb){
-    var itemId = (n==45) ? "BADID" : uuid();
+    var itemId = /*(n==45) ? "BADID" :*/ uuid.v4();
     graph.createNode(["User"],{_id:itemId},function(err,node){
       if (err) {
        //return cb(err);

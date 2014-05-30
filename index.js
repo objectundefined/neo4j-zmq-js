@@ -1,4 +1,4 @@
-var Connection = require('./lib/Connection');
+var Connection = require('./lib/ConnectionPool');
 var Graph = require('./lib/Graph');
 
 exports.createConnection = function ( host , o, f ) {
@@ -7,12 +7,12 @@ exports.createConnection = function ( host , o, f ) {
   var conn = new Connection(host,options);
   conn.connect(function(err){
     if (err) return cb(err);
-    cb(null,new Graph(conn));
+    cb(null,new Graph(conn,options));
   });
 }
 
 exports.createConnectionSync = function ( host , options ) {
   var conn = new Connection(host,options);
   conn.connectSync();
-  return new Graph(conn);
+  return new Graph(conn,options);
 }
