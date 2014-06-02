@@ -7,7 +7,7 @@ var assert = require('assert');
 
 neo.createConnection("tcp://localhost:47474",{poolSize:10},function(err,graph){
   var totalNodes = 10000;
-  var iterations = 1;
+  var iterations = 10;
   console.log('checking unique constraint');
   graph.query("CREATE CONSTRAINT ON (u:User) ASSERT u._id IS UNIQUE",{},function(err){
     if (err) throw err;
@@ -20,7 +20,7 @@ neo.createConnection("tcp://localhost:47474",{poolSize:10},function(err,graph){
 
 function runSingleIterations ( graph, totalNodes, iterations, cb ) {
   var t1 = Date.now();
-  var timeout_time = 500;
+  var timeout_time = 1000;
   async.eachSeries(_.range(iterations),function(n,cb){
     singleIteration((totalNodes/iterations),graph,function(err){
       if (err) return cb(err);
